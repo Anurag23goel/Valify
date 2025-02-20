@@ -75,7 +75,7 @@ const ProjectWorkSpace: React.FC<ProjectWorkSpaceProps> = ({ projectID }) => {
   }, [location.hash]); // Add currentStep to dependencies
   
   const handleMyProjectsClick = () => {
-    navigate('myprojects');
+    navigate('#myprojects');
   };
 
   // Define the steps to be displayed

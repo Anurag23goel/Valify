@@ -847,13 +847,15 @@ const General: React.FC<QuestionnaireProps> = ({ pId }) => {
   const saveAndNext = async () => {
     setLoading(true);
     await storeFormData();
-    navigate(`${location.hash.replace('general', 'revenue')}`);
+    navigate(`#newproject/${projectId}/revenue`);
+    // navigate(`${location.hash.replace('general', 'revenue')}`);
   };
 
   const handlePreviousStep = async () => {
     // setLoading(true);
     // await storeFormData();
-    navigate(`${location.hash.replace('general', 'questionnaire')}`);
+    navigate(`#newproject/${projectId}/questionnaire`);
+    // navigate(`${location.hash.replace('general', 'questionnaire')}`);
   };
 
   const handleCloseSnackbar = () => {

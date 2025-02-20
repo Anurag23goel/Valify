@@ -15,7 +15,7 @@ interface UserRole {
 
 
 
-const ADMIN_EMAIL = 'swap@gmail.com';
+const ADMIN_EMAIL = 'swapa@gmail.com';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();

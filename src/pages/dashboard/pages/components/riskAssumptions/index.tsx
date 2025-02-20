@@ -80,7 +80,6 @@ const RiskAssumptions: React.FC<RiskProps> = ({ pId }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-
     // Authentication effect
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -149,12 +148,14 @@ const RiskAssumptions: React.FC<RiskProps> = ({ pId }) => {
     };
 
     const handlePrevious = () => {
-        navigate(`${location.hash.replace('riskAssumptions', 'valuationInput')}`);
+        navigate(`#newproject/${projectId}/valuationInput`);
+        // navigate(`${location.hash.replace('riskAssumptions', 'valuationInput')}`);
     };
 
     const saveAndNext = async () => {
         await storeFormData();
-        navigate(`${location.hash.replace('riskAssumptions', 'marketAnalysis')}`);
+        navigate(`#newproject/${projectId}/marketAnalysis`);
+        // navigate(`${location.hash.replace('riskAssumptions', 'marketAnalysis')}`);
     };
 
     const handleCloseSnackbar = () => {

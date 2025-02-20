@@ -194,21 +194,24 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ pId }) => {
   useEffect(() => {
     const checkAndUpdateProjectData = async () => {
       if (user && !projectId) {
+        console.log("Hey Purush");
+        console.log(user);
+        
         const projectRef = doc(collection(firestore, 'users', user.uid, 'projects'));
-
+        
         try {
           // Set default fields for a new project document
           await setDoc(
             projectRef,
             {
               projectId: projectRef.id,
-              Status: 'Initial questionnaire',
+              Status: 'Questionnaire',
               estimatedTime: '30 Days',
               Percentage: '10',
             },
             { merge: true }, // Merge with existing data if any
           );
-          console.log('Project created with default fields.');
+          
           setProjectId(projectRef.id);
         } catch (error) {
           console.error('Error setting default project fields:', error);
@@ -343,20 +346,20 @@ const Questionnaire: React.FC<QuestionnaireProps> = ({ pId }) => {
 
   //   }
   // };
-
   const saveAndNext = async () => {
     setLoading(true);
    await storeFormData();
-    let newPath = "";
+   navigate(`#newproject/${projectId}/general`);
+    // let newPath = "";
   
-    if (location.hash === `#newproject/${projectId}/questionnaire`) {
-      newPath = location.hash.replace("questionnaire", "general");
-    } else {
-      newPath = `#${location.hash}/${projectId}/general`;
-    }
+    // if (location.hash === `#newproject/${projectId}/questionnaire`) {
+    //   newPath = location.hash.replace("questionnaire", "general");
+    // } else {
+    //   newPath = `#${location.hash}/${projectId}/general`;
+    // }
   
-    console.log("Navigating to:", newPath);
-    navigate(newPath.replace("#", "")); // Remove "#" for react-router
+    // console.log("Navigating to:", newPath);
+    // navigate(newPath.replace("#", "")); // Remove "#" for react-router
   };
 
 

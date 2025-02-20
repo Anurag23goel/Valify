@@ -254,10 +254,12 @@ const Revenue: React.FC<RevenueProps> = ({ pId }) => {
   const saveAndNext = async () => {
 
     await storeFormData();
-    navigate(`${location.hash.replace('grossMargin', 'operatingExpenses')}`);
+    navigate(`#newproject/${projectId}/operatingExpenses`);
+    // navigate(`${location.hash.replace('grossMargin', 'operatingExpenses')}`);
   };
   const handlePreviousStep = async () => {
-    navigate(`${location.hash.replace('grossMargin', 'revenue')}`);
+    navigate(`#newproject/${projectId}/revenue`);
+    // navigate(`${location.hash.replace('grossMargin', 'revenue')}`);
     // await storeFormData();
     // navigate(`/#myprojects/${projectId}/questionnaire`)
     // navigate('#newproject/' + projectId + "/questionnaire");

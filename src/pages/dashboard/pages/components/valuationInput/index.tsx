@@ -459,7 +459,8 @@ const ValuationInput: React.FC<ValuationProps> = ({ pId }) => {
                 <Grid item>
                     <Button
                         onClick={async () => {
-                            navigate(`${location.hash.replace('valuationInput', 'networkingCapital')}`);
+                            navigate(`#newproject/${projectId}/networkingCapital`);
+                            // navigate(`${location.hash.replace('valuationInput', 'networkingCapital')}`);
                         }}
                         variant="outlined"
                         sx={{ color: 'black', paddingX: 8, border: 1, borderColor: 'primary.main' }}
@@ -474,7 +475,8 @@ const ValuationInput: React.FC<ValuationProps> = ({ pId }) => {
                         variant="contained"
                         onClick={async () => {
                             await storeFormData();
-                            navigate(`${location.hash.replace('valuationInput', 'riskAssumptions')}`);
+                            navigate(`#newproject/${projectId}/riskAssumptions`);
+                            // navigate(`${location.hash.replace('valuationInput', 'riskAssumptions')}`);
                         }}
                     >
                         Save and Next

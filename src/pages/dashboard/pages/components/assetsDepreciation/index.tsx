@@ -299,11 +299,13 @@ const AssestsDepreciation: React.FC<OperatingExpensesProps> = ({ pId }) => {
 
   const saveAndNext = async () => {
     await storeFormData();
-    navigate(`${location.hash.replace('assetsAndDepreciation', 'networkingCapital')}`);
+    navigate(`#newproject/${projectId}/networkingCapital`);
+    // navigate(`${location.hash.replace('assetsAndDepreciation', 'networkingCapital')}`);
   };
 
   const handlePreviousStep = async () => {
-    navigate(`${location.hash.replace('assetsAndDepreciation', 'operatingExpenses')}`);
+    navigate(`#newproject/${projectId}/operatingExpenses`);
+    // navigate(`${location.hash.replace('assetsAndDepreciation', 'operatingExpenses')}`);
     // await storeFormData();
     // navigate(`/#myprojects/${projectId}/questionnaire`)
     // navigate('#newproject/' + projectId + "/questionnaire");

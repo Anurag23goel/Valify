@@ -12,7 +12,7 @@ import {
   CircularProgress,
   MenuItem,
   Select,
-  Button,
+  Button, Grid
 } from '@mui/material';
 import * as XLSX from 'xlsx';
 import { auth } from 'firebase'; // Adjust import path based on your file structure
@@ -88,12 +88,15 @@ const ForecastsChecks: React.FC<QuestionnaireProps> = ({ pId }) => {
   const [loading, setLoading] = useState(false);
   const [actionSelections, setActionSelections] = useState<{ [key: string]: string }>({});
   const navigate = useNavigate();
+  const [projectId, setProjectId] = useState<string | null | undefined>(null);
+    
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUser(user);
         loadData(user.uid);
+        setProjectId(pId);
       } else {
         setUser(null);
         navigate('/auth/signin');
@@ -101,6 +104,18 @@ const ForecastsChecks: React.FC<QuestionnaireProps> = ({ pId }) => {
     });
     return () => unsubscribe();
   }, [navigate, pId]);
+
+
+  const handlePrevious = () => {
+    navigate(`#newproject/${projectId}/marketAnalysis`);
+    // navigate(`${location.hash.replace('riskAssumptions', 'valuationInput')}`);
+};
+
+const handleNext = async () => {
+    // await storeFormData();
+    navigate(`#newproject/${projectId}/reviewStage`);
+    // navigate(`${location.hash.replace('riskAssumptions', 'marketAnalysis')}`);
+};
 
   const loadData = async (uid: string) => {
     if (!pId) return;
@@ -285,15 +300,24 @@ const ForecastsChecks: React.FC<QuestionnaireProps> = ({ pId }) => {
         ))
       )}
       <Box display="flex" justifyContent="center" marginTop={4}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSave}
-          disabled={loading || !flagsData.length}
-        >
-          Save
-        </Button>
-        
+      <Grid container justifyContent="space-evenly" spacing={2} mt={2}>
+                <Grid item>
+                    <Button
+                        variant="outlined"
+                        onClick={handlePrevious}
+                        sx={{ color: 'black', paddingX: 8, border: 1, borderColor: 'primary.main' }}
+                    >
+                        Previous
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button variant="contained" onClick={!flagsData.length ? handleNext : saveAndNext}>
+                    {!flagsData.length ? "Next": "Save and Next"}
+                    </Button>
+                </Grid>
+            </Grid>
+      
+      
         
       </Box>
     </Box>
