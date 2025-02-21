@@ -46,10 +46,10 @@ const ProjectWorkSpace: React.FC<ProjectWorkSpaceProps> = ({ projectID }) => {
     const hashParts = location.hash.split('/'); // Split the hash
     if (hashParts.length > 2) {
       const stepFromHash = hashParts[2];
-      console.log("hash here:",stepFromHash);
+      console.log('hash here:', stepFromHash);
       const stepIndex = [
         'questionnaire',
-         'general',
+        'general',
         'revenue',
         'grossMargin',
         'operatingExpenses',
@@ -62,18 +62,18 @@ const ProjectWorkSpace: React.FC<ProjectWorkSpaceProps> = ({ projectID }) => {
         'reviewStage',
         'outputStage',
       ].indexOf(stepFromHash);
-  
+
       // Set currentStep only if the stepIndex is valid and different
       if (stepIndex !== -1) {
-        console.log("current Step",currentStep);
+        console.log('current Step', currentStep);
         setCurrentStep(stepIndex + 1);
         console.log(currentStep);
-      }else{
+      } else {
         setCurrentStep(1);
       }
     }
   }, [location.hash]); // Add currentStep to dependencies
-  
+
   const handleMyProjectsClick = () => {
     navigate('#myprojects');
   };
@@ -81,6 +81,14 @@ const ProjectWorkSpace: React.FC<ProjectWorkSpaceProps> = ({ projectID }) => {
   // Define the steps to be displayed
   const steps = [
     { number: 1, name: 'Questionnaire', path: 'questionnaire' },
+    { number: 2, name: 'General', path: 'general' },
+    { number: 3, name: 'Revenue', path: 'revenue' },
+    { number: 4, name: 'Gross Margin', path: 'grossMargin' },
+    { number: 5, name: 'Operating Expenses', path: 'operatingExpenses' },
+    { number: 6, name: 'Assets & Depreciation', path: 'assetsAndDepreciation' },
+    { number: 7, name: 'Networking Capital', path: 'networkingCapital' },
+    { number: 8, name: 'Valuation Input', path: 'valuationInput' },
+    { number: 9, name: 'Risk Assumptions', path: 'riskAssumptions' },
     { number: 10, name: 'Market Analysis', path: 'marketAnalysis' },
     { number: 11, name: 'Forecasts Checks', path: 'forecastsChecks' },
     { number: 12, name: 'Review Stage', path: 'reviewStage' },
@@ -91,15 +99,15 @@ const ProjectWorkSpace: React.FC<ProjectWorkSpaceProps> = ({ projectID }) => {
   const StepContent = () => {
     switch (currentStep) {
       case 1:
-        return < Questionnaire pId={projectID} />;
+        return <Questionnaire pId={projectID} />;
       case 2:
-        console.log("Revenue");
-        return < General pId={projectID} />;
+        console.log('Revenue');
+        return <General pId={projectID} />;
       case 3:
-        console.log("General");
-        return < Revenue pId={projectID} />;
+        console.log('General');
+        return <Revenue pId={projectID} />;
       case 4:
-        console.log("Gross Margin");
+        console.log('Gross Margin');
         return <GrossMargin pId={projectID} />;
       case 5:
         return <OperatingExpenses pId={projectID} />;
@@ -128,8 +136,20 @@ const ProjectWorkSpace: React.FC<ProjectWorkSpaceProps> = ({ projectID }) => {
   const currentEstimatedTime =
     estimatedTimes.find((time) => time.step === currentStep)?.time || 'N/A';
 
-  return (
+  // Define how many steps to show at a time
+  const windowSize = 5; // Display 4-5 steps at a time
 
+  // Find the index of the current step
+  const currentStepIndex = steps.findIndex((step) => step.number === currentStep);
+
+  // Ensure we get a valid range (handle cases when currentStep is at the beginning or end)
+  const startIndex = Math.max(0, currentStepIndex - Math.floor(windowSize / 2));
+  const endIndex = Math.min(steps.length, startIndex + windowSize);
+
+  // Slice the steps to show only 4-5 at a time
+  const visibleSteps = steps.slice(startIndex, endIndex);
+
+  return (
     <Grid container spacing={3}>
       <Grid item xs={12} mb={3} container justifyContent="space-between" alignItems="center">
         <Box display="flex" alignItems="center" gap={2}>
@@ -195,19 +215,18 @@ const ProjectWorkSpace: React.FC<ProjectWorkSpaceProps> = ({ projectID }) => {
             </Grid>
 
             <Grid container justifyContent="center" alignItems="center" spacing={2}>
-              {steps.flatMap((step, index) => [
+              {visibleSteps.flatMap((step, index) => [
                 <Grid item xs={2} key={step.number} textAlign="center">
-                  <Grid>
+                  <Box>
                     <Typography
                       variant="body2"
                       sx={{
-                        fontWeight: currentStep >= step.number ? 'normal' : 'normal',
-                        marginBottom: '2px',
-                        color: currentStep >= step.number ? '#0D0D0D' : '#565656',
-                        fontSize: { xs: '12px', md: '14px' },
+                        fontWeight: currentStep >= step.number ? 'bold' : 'normal',
+                        fontSize: { xs: '14px', md: '20px' },
+                        color: '#0D0D0D',
                       }}
                     >
-                      Step {step.number === 9 ? 2 : step.number === 10 ? 3 : step.number === 11 ? 4 : step.number === 12 ? 5 : step.number}
+                      Step {step.number}
                     </Typography>
 
                     <Typography
@@ -216,40 +235,29 @@ const ProjectWorkSpace: React.FC<ProjectWorkSpaceProps> = ({ projectID }) => {
                         fontWeight: currentStep >= step.number ? 'bold' : 'normal',
                         fontSize: { xs: '14px', md: '20px' },
                         color: '#0D0D0D',
-                        marginLeft: '10px'
                       }}
                     >
                       {step.name}
                     </Typography>
-                  </Grid>
+                  </Box>
                 </Grid>,
 
-                index < steps.length - 1 ? (
-                  <Grid
-                    item
-                    xs={3}
-                    md={0.5}
-                    key={`arrow-${index}`}
-                    textAlign="center"
-                    pt={3}
-                  >
-                    <Typography variant="h6">
-                      <img
-                        src="/dashboardarrow.svg"
-                        alt="Arrow broken-up"
-                        style={{
-                          margin: '10px auto',
-                          width: '24px',
-                          height: '24px',
-                          display: 'block',
-                        }}
-                      />
-                    </Typography>
+                index < visibleSteps.length - 1 ? (
+                  <Grid item xs={3} md={0.5} key={`arrow-${index}`} textAlign="center" pt={3}>
+                    <img
+                      src="/dashboardarrow.svg"
+                      alt="Arrow broken-up"
+                      style={{
+                        margin: '10px auto',
+                        width: '24px',
+                        height: '24px',
+                        display: 'block',
+                      }}
+                    />
                   </Grid>
                 ) : null,
               ])}
             </Grid>
-
 
             <hr
               style={{
@@ -267,7 +275,6 @@ const ProjectWorkSpace: React.FC<ProjectWorkSpaceProps> = ({ projectID }) => {
         </Card>
       </Grid>
     </Grid>
-
   );
 };
 
