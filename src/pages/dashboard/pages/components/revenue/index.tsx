@@ -30,19 +30,19 @@ const questionnaireData = [
   {
     segmentTitle: 'Revenue Information',
     questions: [
-      // {
-      //   type: 'dropdown',
-      //   question: 'Select your revenue categorization style.',
-      //   id: 'revenueCategorizationStyle',
-      //   questionName: ' ',
-      //   options: [
-      //     ' Product/Service',
-      //     'Major Clients',
-      //     ' Region of Operation',
-      //     'Other',
-      //     'Mix(Not recommended)',
-      //   ],
-      // },
+      {
+        type: 'dropdown',
+        question: 'Select your revenue categorization style.',
+        id: 'revenueCategorizationStyle',
+        questionName: ' ',
+        options: [
+          ' Product/Service',
+          'Major Clients',
+          ' Region of Operation',
+          'Other',
+          'Mix(Not recommended)',
+        ],
+      },
       {
         type: 'text',
         question: ' ',
@@ -110,8 +110,9 @@ const questionnaireData = [
       {
         type: 'mcq',
         question:
-          '"Potential revenues" are new revenue streams that are not yet confirmed, but the business may achieve in the next 5 years.  Does the business have any such potential revenues? If yes, please identify and add names of such potential revenue categories for the below \n\n.Note: Example - An ongoing bid for a new service contract for next 2 years which is not yet won or signed OR a manufacturer looking to enter retail market by opening stores in the future.',
+          '"Potential revenues" are new revenue streams that are not yet confirmed, but the business may achieve in the next 5 years.  Does the business have any such potential revenues? If yes, please identify and add names of such potential revenue categories for the below.',
         id: 'potentialrevenue',
+        points: `Note: Example - An ongoing bid for a new service contract for next 2 years which is not yet won or signed OR a manufacturer looking to enter retail market by opening stores in the future.`,
         questionName: 'Potential revenues',
         options: ['Yes', 'No'],
       },
@@ -293,6 +294,7 @@ interface TableQuestion {
   columns: string[]; // Names of the columns
   ignore?: boolean;
   dependsOn?: string;
+  extra: string;
   showWhen?: string;
   autofill?: { [key: string]: string };
   subheader?: string; // Optional, for additional headers
@@ -419,6 +421,7 @@ const Revenue: React.FC<RevenueProps> = ({ pId }) => {
       ...prevAnswers,
       [questionId]: value,
     }));
+    console.log(answers);
   };
 
   const isSegmentCompleted = (segment: Segment) => {
@@ -603,10 +606,10 @@ const Revenue: React.FC<RevenueProps> = ({ pId }) => {
         </Typography>
       </div>
       <Typography sx={{ marginTop: 8, marginX: 6, color: 'primary.main', fontWeight: 'bold' }}>
-        <h1 className="text-xl">Existing Revenues</h1>
+        <span className="text-xl">Existing Revenues</span>
       </Typography>
       <Typography sx={{ marginTop: 1, marginX: 6, color: '#3D3D3D' }}>
-        <span className="text-[#51D3E1]">Existing Revenues</span> are revenue streams that are
+        <span>Existing Revenues</span> are revenue streams that are
         historically and currently operational.
       </Typography>
       <Typography sx={{ marginTop: 2, marginX: 6, color: '#3D3D3D' }}>
@@ -634,15 +637,17 @@ const Revenue: React.FC<RevenueProps> = ({ pId }) => {
                         <Grid container spacing={2}>
                           {question.type === 'table' ? (
                             <React.Fragment>
-                              <Typography
-                                variant="body1"
-                                sx={{ color: 'primary.main', marginY: 3, marginLeft: 3 }}
-                              >
+                              <Typography variant="body1" sx={{ color: 'primary.main' }}>
                                 {question.question}
                               </Typography>
 
                               {/* Table for 'table' type questions */}
-                              {question.type === 'table' && <RevenueTables pId={pId} />}
+                              {question.type === 'table' && answers['presentationCurrency'] && answers['existingBusinessRevenues']
+                              && answers['pipelineBusinessRevenues']
+                               && answers['potentialBusinessRevenues']
+                              && (
+                                <RevenueTables pId={pId} answers={answers} setAnswers={setAnswers} />
+                              )}
                             </React.Fragment>
                           ) : (
                             <>
@@ -661,11 +666,14 @@ const Revenue: React.FC<RevenueProps> = ({ pId }) => {
                                 )}
                                 {/* points */}
                                 {hasPoints(question) && (
-                                  <Typography sx={{ gap: 2, display: 'flex', flexDirection: 'column' }} gutterBottom>
+                                  <Typography
+                                    sx={{ gap: 2, display: 'flex', flexDirection: 'column' }}
+                                    gutterBottom
+                                  >
                                     {question.points.split('\n').map((point, index) => {
                                       const parts = point.split(':'); // Split the heading and the content
                                       return (
-                                        <span key={index} className='text-md '>
+                                        <span key={index} className="text-md ">
                                           {parts[0]}: {parts.slice(1).join('.')}
                                           <br />
                                         </span>
