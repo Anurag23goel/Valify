@@ -548,12 +548,15 @@ interface QuestionBase {
 interface QuestionWithPoints extends QuestionBase {
   points: string; // Only add `points` to types that should have it
 }
+
 type Question = QuestionBase | QuestionWithPoints;
+
 // Define the type for a segment
 interface Segment {
   segmentTitle: string;
   questions: Question[];
 }
+
 function hasPoints(question: Question): question is QuestionWithPoints {
   return (question as QuestionWithPoints).points !== undefined;
 }
@@ -906,6 +909,7 @@ const General: React.FC<QuestionnaireProps> = ({ pId }) => {
   //     }));
   //   }
   // };
+
   const handleDropdownChange = (questionId: string, value: string) => {
     setAnswers((prev) => {
       const existingRegions = Object.keys(prev)
@@ -1145,786 +1149,182 @@ const General: React.FC<QuestionnaireProps> = ({ pId }) => {
   };
 
   return !loading ? (
-    <Box
-      sx={{
-        mx: { xs: -8, md: 1 }, // Reduced margin on the x-axis for max-md screens
-      }}
-    >
-      <Timeline currentStep={2} /> {/* Placeholder for the timeline component */}
-      {questionnaireData.map((segment, segmentIndex) => {
-        return (
-          <Accordion key={segmentIndex} expanded={expandedSegments[segmentIndex]}>
-            <AccordionSummary
+    <Box sx={{ mt: 4, px: { xs: 2, md: 6 } }}>
+      {/* Timeline Component */}
+      <Timeline currentStep={2} />
+
+      {questionnaireData.map((segment, segmentIndex) => (
+        <Accordion key={segmentIndex} expanded={expandedSegments[segmentIndex]}>
+          <AccordionSummary sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+            <Box
               sx={{
-                width: '100%',
                 display: 'flex',
-                justifyContent: 'flex-start',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                width: '100%',
+                borderRadius: '5px',
+                bgcolor: isSegmentCompleted(segment) ? 'primary.main' : 'grey.400',
+                p: 1,
               }}
             >
-              <Box
+              <Button
+                disabled={!isSegmentCompleted(segment)}
+                variant="contained"
                 sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
                   width: '100%',
                   borderRadius: '5px',
-
+                  textAlign: 'left',
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  color: '#0D0D0D', // Black text for heading
+                  fontWeight: 'bold',
                   bgcolor: isSegmentCompleted(segment) ? 'primary.main' : 'grey.400',
-                  '&:hover': {
-                    bgcolor: isSegmentCompleted(segment) ? 'primary.main' : 'grey.400',
-                  },
+                  '&:hover': { bgcolor: isSegmentCompleted(segment) ? 'primary.main' : 'grey.500' },
                 }}
               >
-                <Button
-                  disabled={!isSegmentCompleted(segment)}
-                  variant="contained"
-                  sx={{
-                    width: '100%',
-                    borderRadius: '5px',
-                    bgcolor: isSegmentCompleted(segment) ? 'primary.main' : 'grey.400',
-                    '&:hover': {
-                      bgcolor: isSegmentCompleted(segment) ? 'primary.main' : 'grey.500',
-                    },
-                    textAlign: 'left',
-                    padding: '8px 16px',
-                    display: 'flex',
-                    justifyContent: 'flex-start',
-                  }}
-                >
-                  {segment.segmentTitle}
-                </Button>
+                {segment.segmentTitle}
+              </Button>
 
-                <IconButton onClick={() => handleToggleAccordion(segmentIndex)} size="small">
-                  {expandedSegments[segmentIndex] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                </IconButton>
-              </Box>
-            </AccordionSummary>
+              <IconButton onClick={() => handleToggleAccordion(segmentIndex)} size="small">
+                {expandedSegments[segmentIndex] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </IconButton>
+            </Box>
+          </AccordionSummary>
 
-            {
-              <>
-                <AccordionDetails>
-                  {segment.questions.map((question, questionIndex) => (
-                    <Box key={questionIndex} mb={3}>
-                      {(!answers['existingBusinessCheck'] ||
-                        answers['existingBusinessCheck'] === 'No') &&
-                      question.id === 'historicalFinancialInformation' ? (
-                        <div></div>
-                      ) : (
-                        <Grid container spacing={2} direction={{ xs: 'column', md: 'row' }}>
-                          <Grid item xs={3}>
-                            <Typography variant="body1" sx={{ color: 'primary.main' }}>
-                              {question.questionName}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={9}>
-                            <Typography variant="body1" gutterBottom>
-                              {question.question}
-                            </Typography>
-                            {question.explanation && (
-                              <Typography
-                                variant="body2"
-                                sx={{ fontStyle: 'italic', color: 'gray' }}
-                                gutterBottom
-                              >
-                                {question.explanation}
-                              </Typography>
-                            )}
-                            {/* points */}
-                            {hasPoints(question) && (
-                              <Typography
-                                variant="body2"
-                                sx={{ color: 'black', paddingLeft: '16px' }}
-                                gutterBottom
-                              >
-                                {question.points.split('\n').map((point, index) => {
-                                  const parts = point.split(':');
-                                  return (
-                                    <span key={index}>
-                                      <strong>{parts[0]}</strong> {parts.slice(1).join('.')}
-                                      <br />
-                                    </span>
-                                  );
-                                })}
-                              </Typography>
-                            )}
+          <AccordionDetails>
+            {segment.questions.map((question, questionIndex) => (
+              <Box key={questionIndex} mb={3}>
+                <Grid container spacing={2} alignItems="center">
+                  {question.questionName && (
+                    <Grid item xs={12} md={3}>
+                      <Typography variant="h6" sx={{ color: '#0D0D0D', fontWeight: 'bold' }}>
+                        {question.questionName}
+                      </Typography>
+                    </Grid>
+                  )}
 
-                            {/* Text for 'text' type questions */}
-                            {question.type === 'text' &&
-                              (question.id === 'primaryBusinessDescription' ||
-                              question.id === 'secondaryBusinessDescription' ? (
-                                <TextField
-                                  fullWidth
-                                  variant="outlined"
-                                  value={answers[question.id] || ''}
-                                  onChange={(e) => {
-                                    const words = e.target.value.split(/\s+/).filter(Boolean); // Split by spaces and remove empty entries
-                                    if (words.length <= 15) {
-                                      handleChange(question.id, e.target.value);
-                                    }
-                                  }}
-                                />
-                              ) : (
-                                <TextField
-                                  fullWidth
-                                  variant="outlined"
-                                  value={answers[question.id] || ''}
-                                  onChange={(e) => handleChange(question.id, e.target.value)}
-                                />
-                              ))}
+                  <Grid item xs={12} md={9}>
+                    <Typography variant="body1" gutterBottom sx={{ color: '#3D3D3D' }}>
+                      {question.question}
+                    </Typography>
 
-                            {/* Select for 'mcq' type questions */}
-                            {question.type === 'mcq' && question.options && (
-                              <FormControl component="fieldset">
-                                <RadioGroup
-                                  value={answers[question.id] || ''}
-                                  onChange={(e) => handleChange(question.id, e.target.value)}
-                                  row
-                                >
-                                  {question.options.map((option, optionIndex) => (
-                                    <FormControlLabel
-                                      key={optionIndex}
-                                      value={option}
-                                      control={<Radio />}
-                                      label={option}
-                                    />
-                                  ))}
-                                </RadioGroup>
+                    {question.explanation && (
+                      <Typography
+                        variant="body2"
+                        sx={{ fontStyle: 'italic', color: 'gray', mt: 1 }}
+                      >
+                        {question.explanation}
+                      </Typography>
+                    )}
 
-                                {answers[question.id] === 'Other' && (
-                                  <TextField
-                                    fullWidth
-                                    label="Please specify"
-                                    value={answers[`${question.id}_other`] || ''}
-                                    onChange={(e) =>
-                                      handleChange(`${question.id}_other`, e.target.value)
-                                    }
-                                  />
-                                )}
-                              </FormControl>
-                            )}
+                    {/* Points List */}
+                    {hasPoints(question) && (
+                      <Box sx={{ pl: 2, mt: 1 }}>
+                        {question.points.split('\n').map((point, index) => (
+                          <Typography key={index} variant="body2" sx={{ color: '#3D3D3D' }}>
+                            {point}
+                          </Typography>
+                        ))}
+                      </Box>
+                    )}
 
-                            {/* Select with others for 'mcq-other' type questions */}
-                            {question.type === 'mcq-other' && question.options && (
-                              <FormControl>
-                                <RadioGroup
-                                  row
-                                  value={answers[question.id] || ''}
-                                  onChange={(e) => handleChange(question.id, e.target.value)}
-                                  sx={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                  }} // To ensure proper alignment
-                                >
-                                  {question.options.map((option, optionIndex) => (
-                                    <FormControlLabel
-                                      key={optionIndex}
-                                      value={option}
-                                      control={<Radio />}
-                                      label={option}
-                                      sx={{ mr: 3 }}
-                                    />
-                                  ))}
-                                </RadioGroup>
-                                {answers[question.id] === 'Other' && (
-                                  <TextField
-                                    fullWidth
-                                    label="Please specify"
-                                    value={answers[`${question.id}_other`] || ''}
-                                    onChange={(e) =>
-                                      handleChange(`${question.id}_other`, e.target.value)
-                                    }
-                                  />
-                                )}
-                              </FormControl>
-                            )}
+                    {/* Input Fields */}
+                    {question.type === 'text' && (
+                      <TextField
+                        fullWidth
+                        variant="outlined"
+                        value={answers[question.id] || ''}
+                        onChange={(e) => handleChange(question.id, e.target.value)}
+                      />
+                    )}
 
-                            {/* Dropdown for 'dropdown' type questions */}
-                            {question.type === 'dropdown' &&
-                              question.options &&
-                              (question.id === 'units' ? (
-                                <FormControl fullWidth variant="outlined">
-                                  <Select
-                                    value={answers[question.id] || ''}
-                                    onChange={(e) => handleChange(question.id, e.target.value)}
-                                    displayEmpty
-                                  >
-                                    <MenuItem value="" disabled>
-                                      Select an option
-                                    </MenuItem>
-                                    {[
-                                      `${answers['presentationCurrency']} million`,
-                                      `${answers['presentationCurrency']} 000s`,
-                                    ].map((option, optionIndex) => (
-                                      <MenuItem key={optionIndex} value={option}>
-                                        {option}
-                                      </MenuItem>
-                                    ))}
-                                  </Select>
-                                </FormControl>
-                              ) : (
-                                <FormControl fullWidth variant="outlined">
-                                  <Select
-                                    value={answers[question.id] || ''}
-                                    onChange={(e) => handleChange(question.id, e.target.value)}
-                                    displayEmpty
-                                  >
-                                    <MenuItem value="" disabled>
-                                      Select an option
-                                    </MenuItem>
-                                    {question.options.map((option, optionIndex) => (
-                                      <MenuItem key={optionIndex} value={option}>
-                                        {option}
-                                      </MenuItem>
-                                    ))}
-                                  </Select>
-                                  {answers[question.id] === 'Other' && (
-                                    <TextField
-                                      fullWidth
-                                      label="Please specify"
-                                      style={{ marginTop: '4px' }}
-                                      value={answers[`${question.id}_other`] || ''}
-                                      onChange={(e) =>
-                                        handleChange(`${question.id}_other`, e.target.value)
-                                      }
-                                    />
-                                  )}
-                                </FormControl>
-                              ))}
-
-                            {/* Country dropdown */}
-                            <>
-                              {question.type === 'other-table' && question.options && (
-                                <FormControl fullWidth variant="outlined">
-                                  {question.id === 'secondaryRegions' ? (
-                                    <Autocomplete
-                                      multiple
-                                      value={Object.keys(answers)
-                                        .filter((key) => key.startsWith(`${question.id}Name`))
-                                        .map((key) => answers[key])}
-                                      onChange={(event, newValues) => {
-                                        setAnswers((prev) => {
-                                          const updatedAnswers = { ...prev };
-                                          newValues.slice(0, 3).forEach((value, index) => {
-                                            updatedAnswers[`${question.id}Name${index + 1}`] =
-                                              value;
-                                          });
-                                          return updatedAnswers;
-                                        });
-                                      }}
-                                      options={countryList.filter((country) =>
-                                        answers['secondaryRegionsName1'] &&
-                                        answers['secondaryRegionsName1'].trim() !== ''
-                                          ? country !== answers['secondaryRegionsName1']
-                                          : true,
-                                      )}
-                                      disableClearable
-                                      isOptionEqualToValue={(option, value) => option === value}
-                                      getOptionLabel={(option) => option}
-                                      filterOptions={(options, state) =>
-                                        options.filter((option) =>
-                                          option
-                                            .toLowerCase()
-                                            .includes(state.inputValue.toLowerCase()),
-                                        )
-                                      } // Filter options
-                                      noOptionsText="No countries found"
-                                      ListboxProps={{
-                                        sx: {
-                                          borderRadius: '8px',
-                                          boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-                                          backgroundColor: '#fff',
-                                          maxHeight: '200px',
-                                          width: '100%',
-                                          marginTop: -3,
-                                          marginLeft: '-24px',
-                                        },
-                                      }}
-                                      renderTags={() => null}
-                                      renderInput={(params) => (
-                                        <TextField
-                                          {...params}
-                                          label={
-                                            question.id === 'secondaryRegions'
-                                              ? 'Select Country'
-                                              : 'Select up to 3 Countries'
-                                          }
-                                          variant="outlined"
-                                          fullWidth
-                                        />
-                                      )}
-                                    />
-                                  ) : (
-                                    <Autocomplete
-                                      multiple
-                                      value={Object.keys(answers)
-                                        .filter((key) => key.startsWith(`${question.id}Name`))
-                                        .map((key) => answers[key])}
-                                      onChange={(event, newValues) => {
-                                        setAnswers((prev) => {
-                                          const updatedAnswers = { ...prev };
-                                          newValues.slice(0, 3).forEach((value, index) => {
-                                            updatedAnswers[`${question.id}Name${index + 1}`] =
-                                              value;
-                                          });
-                                          return updatedAnswers;
-                                        });
-                                      }}
-                                      options={countryList.filter((country) =>
-                                        answers['primaryRegionsName1'] &&
-                                        answers['primaryRegionsName1'].trim() !== ''
-                                          ? country !== answers['primaryRegionsName1']
-                                          : true,
-                                      )}
-                                      disableClearable
-                                      isOptionEqualToValue={(option, value) => option === value}
-                                      getOptionLabel={(option) => option}
-                                      filterOptions={(options, state) =>
-                                        options.filter((option) =>
-                                          option
-                                            .toLowerCase()
-                                            .includes(state.inputValue.toLowerCase()),
-                                        )
-                                      } // Filter options
-                                      noOptionsText="No countries found"
-                                      ListboxProps={{
-                                        sx: {
-                                          borderRadius: '8px',
-                                          boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-                                          backgroundColor: '#fff',
-                                          maxHeight: '200px',
-                                          width: '100%',
-                                          marginTop: -3,
-                                          marginLeft: '-24px',
-                                        },
-                                      }}
-                                      renderTags={() => null}
-                                      renderInput={(params) => (
-                                        <TextField
-                                          {...params}
-                                          label={
-                                            question.id === 'primaryRegions'
-                                              ? 'Select Country'
-                                              : 'Select up to 3 Countries'
-                                          }
-                                          variant="outlined"
-                                          fullWidth
-                                        />
-                                      )}
-                                    />
-                                  )}
-                                </FormControl>
-                              )}
-
-                              {Object.keys(answers).some((key) =>
-                                key.startsWith(`${question.id}Name`),
-                              ) && (
-                                <TableContainer
-                                  sx={{ marginY: 2, border: '1px solid #ccc', borderRadius: '8px' }}
-                                >
-                                  <Table>
-                                    <TableHead>
-                                      <TableRow>
-                                        <TableCell
-                                          style={{
-                                            fontWeight: 'bold',
-                                            color: '#0D0D0D',
-                                            width: '220px',
-                                          }}
-                                        >
-                                          {/* {question.id} */}
-                                          {question.id === 'primaryRegions' ||
-                                          question.id === 'secondaryRegions'
-                                            ? 'Primary Region'
-                                            : 'Other Operating Region'}
-                                        </TableCell>
-                                        <TableCell
-                                          style={{
-                                            fontWeight: 'bold',
-                                            color: '#0D0D0D',
-                                            width: '220px',
-                                          }}
-                                        >
-                                          Country Name
-                                        </TableCell>
-                                        <TableCell
-                                          style={{
-                                            fontWeight: 'bold',
-                                            color: '#0D0D0D',
-                                            textAlign: 'center',
-                                            width: '240px',
-                                          }}
-                                        >
-                                          {question.id === 'primaryRegions' ||
-                                          question.id === 'secondaryRegions'
-                                            ? ''
-                                            : 'Average Revenue Contribution (%)'}
-                                        </TableCell>
-                                      </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                      {[...Array(3)].map((_, index) => {
-                                        const regionName =
-                                          answers[`${question.id}Name${index + 1}`] || '';
-                                        const regionValue =
-                                          answers[`${question.id}Value${index + 1}`] || '';
-
-                                        return regionName ? (
-                                          <TableRow
-                                            key={index}
-                                            className="border-t border-b border-gray-200"
-                                          >
-                                            <TableCell
-                                              style={{
-                                                width: '270px',
-                                                color: '#0D0D0D',
-                                                padding: '10px',
-                                                borderRight: '1px solid #ccc',
-                                              }}
-                                            >
-                                              {question.id === 'primaryRegions' ||
-                                              question.id === 'secondaryRegions'
-                                                ? 'Primary Region'
-                                                : `Other Operating Region ${index + 1}`}
-                                            </TableCell>
-                                            <TableCell
-                                              style={{
-                                                width: '270px',
-                                                color: '#0D0D0D',
-                                                padding: '10px',
-                                              }}
-                                            >
-                                              {regionName}
-                                            </TableCell>
-                                            <TableCell
-                                              style={{
-                                                width: '150px',
-                                                padding: '2px',
-                                                textAlign: 'center',
-                                                color: '#0D0D0D',
-                                                borderLeft: '1px solid #ccc',
-                                              }}
-                                            >
-                                              {question.id === 'primaryRegions' ||
-                                              question.id === 'secondaryRegions' ? (
-                                                ''
-                                              ) : (
-                                                <TextField
-                                                  variant="outlined"
-                                                  fullWidth
-                                                  value={regionValue}
-                                                  onChange={(e) => {
-                                                    const newValue = Number(e.target.value) || 0;
-                                                    const fieldKey = `${question.id}Value${index + 1}`;
-
-                                                    // Define category keys
-                                                    let categoryFields = [];
-
-                                                    if (question.id === 'secondaryBusiness') {
-                                                      categoryFields = [
-                                                        'otherOperatingRegionsSecondaryValue1',
-                                                        'otherOperatingRegionsSecondaryValue2',
-                                                        'otherOperatingRegionsSecondaryValue3',
-                                                      ];
-                                                    } else if (question.id === 'primaryBusiness') {
-                                                      categoryFields = [
-                                                        'otherRegionsValue1',
-                                                        'otherRegionsValue2',
-                                                        'otherRegionsValue3',
-                                                      ];
-                                                    }
-                                                    // Calculate the sum excluding the current field
-                                                    const currentSum = categoryFields.reduce(
-                                                      (sum, key) => {
-                                                        return (
-                                                          sum +
-                                                          (key === fieldKey
-                                                            ? 0
-                                                            : Number(answers[key]) || 0)
-                                                        );
-                                                      },
-                                                      0,
-                                                    );
-                                                    console.log('currentSum', currentSum);
-                                                    // Ensure the new sum is <= 100
-                                                    if (currentSum + newValue <= 100) {
-                                                      setAnswers((prev) => ({
-                                                        ...prev,
-                                                        [fieldKey]: newValue,
-                                                      }));
-                                                    }
-                                                  }}
-                                                  type="number"
-                                                  sx={{
-                                                    '& input[type=number]': {
-                                                      '-moz-appearance': 'textfield',
-                                                      '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button':
-                                                        {
-                                                          '-webkit-appearance': 'none',
-                                                          margin: 0,
-                                                        },
-                                                    },
-                                                  }}
-                                                />
-                                              )}
-                                            </TableCell>
-                                          </TableRow>
-                                        ) : null;
-                                      })}
-                                    </TableBody>
-                                  </Table>
-                                </TableContainer>
-                              )}
-                            </>
-                            {/* Autocomplete for 'autocomplete' type questions */}
-                            {question.type === 'autocomplete' && question.options && (
-                              <FormControl fullWidth variant="outlined">
-                                <Autocomplete
-                                  value={answers[question.id] || ''}
-                                  onChange={(_, newValue) =>
-                                    handleChange(question.id, newValue || '')
-                                  }
-                                  options={question.options}
-                                  getOptionLabel={(option) => option}
-                                  renderInput={(params) => (
-                                    <TextField
-                                      {...params}
-                                      label="Select an option"
-                                      variant="outlined"
-                                      placeholder="Start typing..."
-                                    />
-                                  )}
-                                />
-                              </FormControl>
-                            )}
-
-                            {/* Date for 'date' type questions */}
-                            {question.type === 'date' && (
-                              <Grid container spacing={2}>
-                                <Grid item xs={4}>
-                                  <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    label="Day"
-                                    type="number"
-                                    placeholder="Day"
-                                    disabled
-                                    value={
-                                      answers[`${question.id}_month`]
-                                        ? getDaysInMonth(
-                                            answers[`${question.id}_month`],
-                                            answers[`${question.id}_year`]
-                                              ? parseInt(answers[`${question.id}_year`])
-                                              : undefined,
-                                          )
-                                        : new Date(
-                                            new Date().getFullYear(),
-                                            new Date().getMonth() + 1,
-                                            0,
-                                          ).getDate()
-                                    }
-                                  />
-                                </Grid>
-
-                                <Grid item xs={4}>
-                                  <Autocomplete
-                                    options={[
-                                      'January',
-                                      'February',
-                                      'March',
-                                      'April',
-                                      'May',
-                                      'June',
-                                      'July',
-                                      'August',
-                                      'September',
-                                      'October',
-                                      'November',
-                                      'December',
-                                    ]}
-                                    getOptionLabel={(option) => option}
-                                    value={
-                                      answers[`${question.id}_month`] ||
-                                      new Date().toLocaleString('default', { month: 'long' })
-                                    }
-                                    onChange={(_, newValue) =>
-                                      handleChange(`${question.id}_month`, newValue ?? '')
-                                    }
-                                    renderInput={(params) => (
-                                      <TextField
-                                        {...params}
-                                        label="Month"
-                                        variant="outlined"
-                                        fullWidth
-                                        InputProps={{
-                                          ...params.InputProps,
-                                          sx: { height: '42px' },
-                                        }}
-                                      />
-                                    )}
-                                  />
-                                </Grid>
-                                <Grid item xs={4}>
-                                  <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    label="Year"
-                                    type="number"
-                                    inputProps={{ min: 1900, max: new Date().getFullYear() }}
-                                    value={
-                                      answers[`${question.id}_year`] || new Date().getFullYear()
-                                    }
-                                    onChange={(e) =>
-                                      handleChange(`${question.id}_year`, e.target.value)
-                                    }
-                                  />
-                                </Grid>
-                              </Grid>
-                            )}
-                            {question.type === 'month' && (
-                              <FormControl fullWidth variant="outlined">
-                                <InputLabel>Duration</InputLabel>
-                                <Select
-                                  value={answers[question.id] || ''}
-                                  onChange={(e) => handleChange(question.id, e.target.value)}
-                                  label="Duration"
-                                >
-                                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((month) => (
-                                    <MenuItem key={month} value={month}>
-                                      {month} {month === 1 ? 'month' : 'months'}
-                                    </MenuItem>
-                                  ))}
-                                </Select>
-                              </FormControl>
-                            )}
-                          </Grid>
-                        </Grid>
-                      )}
-                    </Box>
-                  ))}
-
-                  <Grid container justifyContent="flex-end" mt={2}>
-                    <Button
-                      variant="contained"
-                      onClick={() => {
-                        storeFormData();
-                        handleNext(segmentIndex);
-                      }} // Call storeSegmentData for the segment
-                      disabled={!isSegmentCompleted(segment)} // Disable if not completed
-                    >
-                      Next
-                    </Button>
+                    {question.type === 'mcq' && question.options && (
+                      <FormControl component="fieldset">
+                        <RadioGroup
+                          row
+                          value={answers[question.id] || ''}
+                          onChange={(e) => handleChange(question.id, e.target.value)}
+                        >
+                          {question.options.map((option, optionIndex) => (
+                            <FormControlLabel
+                              key={optionIndex}
+                              value={option}
+                              control={<Radio />}
+                              label={option}
+                            />
+                          ))}
+                        </RadioGroup>
+                      </FormControl>
+                    )}
                   </Grid>
-                </AccordionDetails>
-              </>
-            }
-          </Accordion>
-        );
-      })}
-      {/* upload button  */}
-      {/* {(!answers["existingBusinessCheck"] || answers["existingBusinessCheck"] === "No") ? <div></div>): <div><div> } */}
-      {(!answers["existingBusinessCheck"] || answers["existingBusinessCheck"] === "No") ? <div></div>: <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'start',
-          justifyContent: 'center',
-          marginLeft: '-60px',
-        }}
-      >
-        <Button
-          variant="outlined"
-          color="secondary"
-          onClick={handleButtonClick}
-          sx={{
-            textTransform: 'none',
-            fontSize: '16px',
-            padding: '8px 24px',
-            marginTop: '-160px',
-            display: 'flex',
-            alignItems: 'center',
-            backgroundColor: '#f5f5f5',
-            borderColor: '#333',
-            color: '#333',
-            marginLeft: {
-              xs: '0px',
-              md: '360px',
-            },
-            justifyContent: {
-              xs: 'flex-start',
-              md: 'center',
-            },
-          }}
-        >
-          <img src="/folder.png" alt="Upload File" style={{ marginRight: '12px' }} />
-          Upload File
-        </Button>
+                </Grid>
+              </Box>
+            ))}
+          </AccordionDetails>
+        </Accordion>
+      ))}
 
-        <input
-          type="file"
-          ref={fileInputRef}
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
-        />
-      </div>}
-      {/* download link */}
-      {(!answers["existingBusinessCheck"] || answers["existingBusinessCheck"] === "No") ? <div></div>: <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'start',
-          justifyContent: 'center',
-          marginLeft: '-85px',
-        }}
-      >
-        <Typography
-          sx={{
-            textTransform: 'none',
-            fontSize: '14px',
-            padding: '8px 24px',
-            marginTop: '-70px',
-            display: 'flex',
-            alignItems: 'center',
-            color: '#333',
-            marginLeft: {
-              xs: '0px',
-              md: '360px',
-            },
-            justifyContent: {
-              xs: 'flex-start',
-              md: 'center',
-            },
-            position: 'relative',
-            zIndex: 100,
-            cursor: 'pointer',
-          }}
-        >
-          <span
-            onClick={handleDownload}
-            style={{
+      {/* File Upload & Download Section */}
+      {answers['existingBusinessCheck'] === 'Yes' && (
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={handleButtonClick}
+            sx={{
+              textTransform: 'none',
+              fontSize: '16px',
+              padding: '10px 24px',
+              backgroundColor: '#f5f5f5',
+              borderColor: '#333',
+              color: '#0D0D0D', // Black text
+              display: 'flex',
+              alignItems: 'center',
+              fontWeight: 'bold',
+            }}
+          >
+            <img src="/folder.png" alt="Upload File" style={{ marginRight: '12px' }} />
+            Upload File
+          </Button>
+
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
+
+          {/* Download Link */}
+          <Typography
+            sx={{
+              mt: 2,
               color: '#007BFF',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              '&:hover': { textDecoration: 'underline' },
             }}
           >
             Click here to download Valfiy Historical Financial Template
-          </span>
-        </Typography>
-      </div>}
-      <Grid container justifyContent="space-evenly" mt={2}>
-        {/* Previous Button */}
+          </Typography>
+        </Box>
+      )}
+
+      {/* Navigation Buttons */}
+      <Grid container justifyContent="space-between" mt={4}>
         <Button
           variant="outlined"
-          sx={{ color: 'black', paddingX: 8, border: 1, borderColor: 'primary.main' }}
+          sx={{ color: 'black', px: 4, borderColor: 'primary.main' }}
           onClick={handlePreviousStep}
         >
           Previous
         </Button>
 
-        {/* Save and Next Button */}
         <Button variant="contained" onClick={saveAndNext}>
           Save and Next
         </Button>
       </Grid>
-      {/* Snackbar component for displaying the success message */}
+
+      {/* Snackbar Notification */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}
@@ -1935,63 +1335,39 @@ const General: React.FC<QuestionnaireProps> = ({ pId }) => {
           Form data saved successfully.
         </Alert>
       </Snackbar>
-      {/* popup for concern */}
+
+      {/* Popup Dialog */}
       <Dialog open={openPopup} onClose={() => setOpenPopup(false)}>
-        <DialogTitle
-          align="center"
-          style={{
-            fontWeight: 'bold',
-            color: '#0D0D0D',
-          }}
-        >
+        <DialogTitle align="center" sx={{ fontWeight: 'bold', color: '#0D0D0D' }}>
           Notice
         </DialogTitle>
         <DialogContent>
-          <Typography
-            style={{
-              color: '#0D0D0D',
-            }}
-          >
+          <Typography sx={{ color: '#0D0D0D' }}>
             Hello! Please note that Valify generates valuations for going-concern businesses only.
-            Since the specified business is not expected to continue in future, we cannot consider
-            any future cash flows to contribute to the business value. Thus, the most appropriate
-            way to value such a business would be the net gain from liquidating assets. This is
-            known as the liquidation method of business valuation, which requires a case-by-case
-            asset analysis.
+            Since the specified business is not expected to continue in the future, we cannot
+            consider any future cash flows to contribute to the business value. Thus, the most
+            appropriate way to value such a business would be the net gain from liquidating assets.
+            This is known as the liquidation method of business valuation, which requires a
+            case-by-case asset analysis.
           </Typography>
         </DialogContent>
-        <DialogActions
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            padding: '16px',
-          }}
-        >
-          <Box
-            sx={{
-              backgroundColor: '#51D3E1',
-              borderRadius: '0.375rem',
+        <DialogActions sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+          <Button
+            onClick={() => {
+              setOpenPopup(false);
+              navigate('#myprojects');
             }}
+            sx={{ backgroundColor: '#51D3E1', color: 'Black', px: 4, py: 1 }}
           >
-            <Button
-              onClick={() => {
-                setOpenPopup(false);
-                navigate('#myprojects');
-              }}
-              sx={{
-                backgroundColor: '#51D3E1',
-                color: 'Black',
-                padding: '8px 16px',
-              }}
-            >
-              Okay, I understand!
-            </Button>
-          </Box>
+            Okay, I understand!
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>
   ) : (
-    <CircularProgress />
+    <div className=" text-center">
+      <CircularProgress />
+    </div>
   );
 };
 
