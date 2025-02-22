@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { onAuthStateChanged, getAuth, User } from "firebase/auth";
 import Signin from "./pages/authentication/Signin";
 import Signup from "./pages/authentication/Signup";
 import AdminDashboard from "./pages/admindashboard/AdminDashboard";
 import Dashboard from "./pages/dashboard/Dashbaord.tsx";
-import Splash from "./components/loader/Splash"; // Optional loading screen
+import Splash from "./components/loader/Splash";
 import MainLayout from 'layouts/main-layout';
 import AuthLayout from 'layouts/auth-layout';
 
@@ -15,27 +15,34 @@ const App = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
   const auth = getAuth();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        setUser(null);
-        navigate("/auth/signin"); // Redirect to Signin if not authenticated
-      }
+      setUser(currentUser);
       setLoading(false);
+
+      if (!currentUser && location.pathname !== "/auth/signup") {
+        navigate("/auth/signin"); // Redirect only if not already on signup page
+      }
     });
 
     return () => unsubscribe();
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
-  if (loading) return <Splash />; // Show a loading screen while checking auth
+  if (loading) return <Splash />;
 
-  if (!user) return <AuthLayout><Signin /></AuthLayout>; // If not authenticated, show Signin
+  if (!user) {
+    // Allow unauthenticated users to access both Signin and Signup
+    return (
+      <AuthLayout>
+        {location.pathname === "/auth/signup" ? <Signup /> : <Signin />}
+      </AuthLayout>
+    );
+  }
 
-  // If authenticated, check role
+  // Authenticated user routing
   return user.email === ADMIN_EMAIL ? <MainLayout><AdminDashboard /></MainLayout> : <MainLayout><Dashboard /></MainLayout>;
 };
 

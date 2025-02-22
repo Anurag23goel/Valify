@@ -113,50 +113,6 @@ const AdminProjects: React.FC = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  // useEffect(() => {
-  //   const fetchProjects = async (userId: string) => {
-  //     try {
-  //       setLoading(true);
-  //       setError(null);
-
-  //       const projectsRef = collection(firestore, 'users', userId, 'projects');
-  //       const projectsQuery = query(projectsRef);
-  //       const projectsSnapshot = await getDocs(projectsQuery);
-
-  //       const userProjects: Project[] = [];
-
-  //       projectsSnapshot.forEach(projectDoc => {
-  //         const data = projectDoc.data();
-  //         userProjects.push({
-  //           id: projectDoc.id,
-  //           projectName: data.projectId,
-  //           clientName: data.answers?.clientName,
-  //           companyName: data.answers?.companyName,
-  //           projectStage: data.Status,
-  //           completionDate: data.answers?.completionDate,
-  //           userId: userId
-  //         });
-  //       });
-
-  //       setProjects(userProjects);
-  //     } catch (error) {
-  //       setError(error instanceof Error ? error.message : 'Unknown error');
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   const unsubscribe = auth.onAuthStateChanged((user) => {
-  //     if (user) {
-  //       fetchProjects(user.uid);
-  //     } else {
-  //       setError('Authentication required');
-  //       setLoading(false);
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, []);
   useEffect(() => {
     const fetchAllProjects = async () => {
       try {
@@ -172,7 +128,7 @@ const AdminProjects: React.FC = () => {
         // Fetch projects for each user
         const fetchUserProjectsPromises = usersSnapshot.docs.map(async (userDoc) => {
           const userId = userDoc.id;
-          const projectsRef = collection(firestore, 'users', "li1hBHSaNJWf7uCfm9xiSmvSdAJ3", 'projects');
+          const projectsRef = collection(firestore, 'users', userId, 'projects');
           const projectsSnapshot = await getDocs(projectsRef);
   
           projectsSnapshot.forEach((projectDoc) => {

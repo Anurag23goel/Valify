@@ -159,7 +159,9 @@ const Signin = () => {
       </Stack>
 
       <Typography mt={5} variant="body2" color="text.secondary" align="center" letterSpacing={0.25}>
-        Don't have an account? <Link href={paths.signup}>Signup</Link>
+        Don't have an account? <Link component="button" onClick={() => navigate("/auth/signup")} sx={{ cursor: "pointer" }}>
+    Signup
+  </Link>
       </Typography>
 
       {/* Forgot Password Dialog */}

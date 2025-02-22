@@ -143,6 +143,10 @@ const ValuationInput: React.FC<ValuationProps> = ({ pId }) => {
                     answers,
                     timestamp: new Date(),
                     userId: user.uid,
+                    Status: 'Valuation Input',
+                    route: 'valuationInput',
+                    estimatedTime: '10 Days',
+                    Percentage: '80',
                 },
                 { merge: true },
             );

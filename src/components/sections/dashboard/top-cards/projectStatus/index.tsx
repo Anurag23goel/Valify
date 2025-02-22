@@ -30,6 +30,7 @@ const CircularProgressWithLabel = styled(CircularProgress)({
 const ProjectStatus: React.FC<ProjectStatusProps> = ({
   projectId,
   projectName,
+  projectRoute,
   projectStatus, // 'Completed' or 'Initial questionnaire'
   progressPercentage = 0, // Percentage of progress (if Initial questionnaire)
   estimatedDuration, // Time remaining if 'Initial questionnaire'
@@ -39,7 +40,12 @@ const ProjectStatus: React.FC<ProjectStatusProps> = ({
   const isCompleted = projectStatus === 'Completed';
 
   const handleClick = () => {
-    navigate(`#newproject/${projectId}`); // Navigate to the desired location
+    if(projectRoute){
+      navigate(`#newproject/${projectId}/${projectRoute}`); // Navigate to the desired location
+    }else{
+      navigate(`#newproject/${projectId}`);
+    }
+    
   };
 
   return (

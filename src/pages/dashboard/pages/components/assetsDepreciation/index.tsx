@@ -287,6 +287,10 @@ const AssestsDepreciation: React.FC<OperatingExpensesProps> = ({ pId }) => {
           answers,
           timestamp: new Date(),
           userId: user.uid,
+          Status: 'Assets & Depreciation',
+          route: 'assetsAndDepreciation',
+          estimatedTime: '16 Days',
+          Percentage: '60',
         },
         { merge: true },
       );

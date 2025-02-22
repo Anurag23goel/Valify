@@ -712,8 +712,9 @@ const General: React.FC<QuestionnaireProps> = ({ pId }) => {
             {
               projectId: projectRef.id,
               Status: 'Initial questionnaire',
+              route:  'general',
               estimatedTime: '30 Days',
-              Percentage: '10',
+              Percentage: '20',
             },
             { merge: true }, // Merge with existing data if any
           );

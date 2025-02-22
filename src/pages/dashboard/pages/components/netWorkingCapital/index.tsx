@@ -253,6 +253,10 @@ const NetworkCapital: React.FC<OperatingExpensesProps> = ({ pId }) => {
           answers,
           timestamp: new Date(),
           userId: user.uid,
+          Status: 'Networking Capital',
+          route: 'networkingCapital',
+          estimatedTime: '12 Days',
+          Percentage: '70',
         },
         { merge: true },
       );

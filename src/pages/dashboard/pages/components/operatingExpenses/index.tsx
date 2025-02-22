@@ -247,6 +247,10 @@ const OperatingExpenses: React.FC<OperatingExpensesProps> = ({ pId }) => {
           answers,
           timestamp: new Date(),
           userId: user.uid,
+          Status: 'Operating Expenses',
+          route: 'operatingExpenses',
+          estimatedTime: '18 Days',
+          Percentage: '50',
         },
         { merge: true },
       );

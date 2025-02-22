@@ -138,6 +138,11 @@ const RiskAssumptions: React.FC<RiskProps> = ({ pId }) => {
                     answers,
                     timestamp: new Date(),
                     userId: user.uid,
+                    userId: user.uid,
+                    Status: 'Risk Assumptions',
+                    route: 'riskAssumptions',
+                    estimatedTime: '6 Days',
+                    Percentage: '90',
                 },
                 { merge: true }
             );

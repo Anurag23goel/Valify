@@ -497,6 +497,10 @@ const Revenue: React.FC<RevenueProps> = ({ pId }) => {
           answers,
           timestamp: new Date(),
           userId: user.uid,
+          Status: 'Revenue',
+          route: 'revenue',
+          estimatedTime: '24 Days',
+          Percentage: '30',
         },
         { merge: true },
       );

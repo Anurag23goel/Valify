@@ -124,6 +124,7 @@ const MyProjects = () => {
               <Grid key={index} item xs={12} sm={6} xl={4}>
                 <ProjectStatus
                   projectId={project.projectId}
+                  projectRoute={project.route}
                   projectName={project.answers?.clientName || 'Yet To be Named'}
                   projectStatus={project.Status}
                   progressPercentage={project.Percentage ? parseInt(project.Percentage) : 0}
@@ -150,6 +151,7 @@ const MyProjects = () => {
               <Grid key={index} item xs={12} sm={6} xl={4}>
                 <ProjectStatus
                   projectName={project.projectName}
+                  projectRoute={project.route}
                   projectStatus={project.Status}
                   progressPercentage={project.Percentage ? parseInt(project.Percentage) : 0}
                   dateOfCompletion={project.dateOfCompletion}

@@ -35,8 +35,11 @@ const LandingAdmin: React.FC = () => {
   
           // Process monthly stats
           userProjects.forEach(project => {
-            const month = new Date(project.completionDate).toLocaleString('default', { month: 'short' });
-            monthly[month] = (monthly[month] || 0) + 1;
+            if (project.timestamp && project.timestamp.seconds) {
+              const date = new Date(project.timestamp.seconds * 1000); // Convert Firestore timestamp
+              const month = date.toLocaleString('default', { month: 'short' });
+              monthly[month] = (monthly[month] || 0) + 1;
+            }
             completion[project.projectStage] = (completion[project.projectStage] || 0) + 1;
           });
         }

@@ -95,6 +95,13 @@ const ProjectWorkSpace: React.FC<ProjectWorkSpaceProps> = ({ projectID }) => {
     { number: 13, name: 'Output Stage', path: 'outputStage' },
   ];
 
+  const visibleSteps = [
+    { number: 1, name: 'Questionnaire', path: 'questionnaire' },
+    { number: 2, name: 'Market Analysis', path: 'marketAnalysis' },
+    { number: 3, name: 'Forecasts Checks', path: 'forecastsChecks' },
+    { number: 4, name: 'Review Stage', path: 'reviewStage' },
+    { number: 5, name: 'Output Stage', path: 'outputStage' },
+  ];
   // Component that displays content based on the current step
   const StepContent = () => {
     switch (currentStep) {
@@ -147,8 +154,7 @@ const ProjectWorkSpace: React.FC<ProjectWorkSpaceProps> = ({ projectID }) => {
   const endIndex = Math.min(steps.length, startIndex + windowSize);
 
   // Slice the steps to show only 4-5 at a time
-  const visibleSteps = steps.slice(startIndex, endIndex);
-
+  
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} mb={3} container justifyContent="space-between" alignItems="center">
