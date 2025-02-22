@@ -9,7 +9,7 @@ import Splash from "./components/loader/Splash"; // Optional loading screen
 import MainLayout from 'layouts/main-layout';
 import AuthLayout from 'layouts/auth-layout';
 
-const ADMIN_EMAIL = "swaps@gmail.com";
+const ADMIN_EMAIL = "swap@gmail.com";
 
 const App = () => {
   const [user, setUser] = useState<User | null>(null);
