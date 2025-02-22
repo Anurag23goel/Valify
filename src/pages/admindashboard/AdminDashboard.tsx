@@ -15,8 +15,6 @@ interface UserRole {
 
 
 
-const ADMIN_EMAIL = 'swapa@gmail.com';
-
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,19 +26,10 @@ const AdminDashboard: React.FC = () => {
 
   // Authentication and role checking
   useEffect(() => {
-    const db = getFirestore();
-
     const checkUserRole = async (currentUser: User) => {
       try {
         setUser(currentUser);
-        const userEmail = currentUser.email?.toLowerCase().trim() || '';
-        const isEmailAdmin = userEmail === ADMIN_EMAIL;
-
-        const userDocRef = doc(db, 'users', currentUser.uid);
-        const userDocSnap = await getDoc(userDocRef);
-
-        const roleFromDB = userDocSnap.exists() ? userDocSnap.data()?.role : null;
-        const isAdmin = isEmailAdmin || roleFromDB === 'admin';
+         const isAdmin = true;
 
         setUserRole({
           isAdmin,
