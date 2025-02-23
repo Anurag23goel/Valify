@@ -163,10 +163,12 @@ const OutputStage: React.FC<QuestionnaireProps> = ({ pId }) => {
 // };
 
 const handleRemoveFormulas = async () => {
+  setWait(true);
   try {
-    console.log(`http://localhost:5000/remove-formula-custom?uid=${user.uid}&project_id=${pId}`);
+    console.log(`https://valify-backend.onrender.com/remove-formula-custom?uid=${user.uid}&project_id=${pId}`);
     const response = await axios.get(
-      `http://localhost:5000/remove-formula-custom?uid=${user.uid}&project_id=${pId}`,
+      // `https://valify-backend.onrender.com/remove-formula-custom?uid=${user.uid}&project_id=${pId}`,
+      `https://valify-backend.onrender.com/generate-excel?uid=${user.uid}&project_id=${pId}`,
       {
         responseType: "blob", // Important to receive files
       }
@@ -180,6 +182,7 @@ const handleRemoveFormulas = async () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    setWait(false);
   } catch (error) {
     console.error("Error removing formulas:", error);
   }
@@ -187,10 +190,10 @@ const handleRemoveFormulas = async () => {
 
 // Convert Excel to PDF and Upload to Firebase
 const handleConvertToPdf = async () => {
-  console.log(`http://localhost:5000/convert-to-pdf-custom?uid=${user.uid}&project_id=${pId}`)
+  console.log(`https://valify-backend.onrender.com/convert-to-pdf-custom?uid=${user.uid}&project_id=${pId}`)
   try {
     const response = await axios.get(
-      `http://localhost:5000/convert-to-pdf-custom?uid=${user.uid}&project_id=${pId}`,
+      `https://valify-backend.onrender.com/convert-to-pdf-custom?uid=${user.uid}&project_id=${pId}`,
       {
         responseType: "blob",
       }

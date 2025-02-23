@@ -20,7 +20,7 @@ export default function ReviewStage() {
   const [selectedFile, setSelectedFile] = useState();
   const [processing, setProcessing] = useState(false);
   const navigate = useNavigate();
-  const API_BASE_URL = "http://127.0.0.1:5000";
+  const API_BASE_URL = "https://valify-backend.onrender.com";
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
@@ -217,7 +217,7 @@ export default function ReviewStage() {
   const handleGenerateExcel = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/generate-excel?uid=${userId}&project_id=${base}`, 
+        `https://valify-backend.onrender.com/generate-excel?uid=${userId}&project_id=${base}`, 
         { method: "GET" }
       );
   
