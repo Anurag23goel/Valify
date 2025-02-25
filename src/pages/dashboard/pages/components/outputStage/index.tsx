@@ -193,7 +193,7 @@ const handleConvertToPdf = async () => {
   console.log(`https://valify-backend.onrender.com/convert-to-pdf-custom?uid=${user.uid}&project_id=${pId}`)
   try {
     const response = await axios.get(
-      `https://valify-backend.onrender.com/convert-to-pdf-custom?uid=${user.uid}&project_id=${pId}`,
+      `http://127.0.0.1:5000/convert-to-pdf?uid=${user.uid}&project_id=${pId}`,
       {
         responseType: "blob",
       }

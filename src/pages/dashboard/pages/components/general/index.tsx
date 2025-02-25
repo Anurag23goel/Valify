@@ -186,6 +186,7 @@ const questionnaireData = [
           'What is the approximate average annual revenue of the company over last 3-5 years in USD Mn. If historic revenue is volatile, mention the most recent actual or estimate annual revenue. If actual revenue is unavailable, mention a revenue estimate.',
         id: 'avgAnnualRevenue',
         questionName: 'Average Annual Revenue',
+        ignore: true,
         explanation:
           '(Note: This question is purely for size reference only, thus an estimation is sufficient.)',
       },
@@ -194,6 +195,7 @@ const questionnaireData = [
         question:
           "Select the most relevant industry for the company's primary business operations.",
         id: 'industryPrimaryBusiness',
+        ignore: true,
         questionName: 'Industry - Primary Business',
         options: [
           'Advertising',
@@ -297,6 +299,7 @@ const questionnaireData = [
         question:
           'If relevant, specify a sub-industry for the primary business otherwise write N/A',
         id: 'subindustryPrimaryBusiness',
+        ignore: true,
         questionName: 'Sub-industry - Primary Business',
       },
       {
@@ -304,6 +307,7 @@ const questionnaireData = [
         question:
           'Please select one or more from the below that most accurately describe the nature of your business(es) : ',
         id: 'primaryBusiness',
+        ignore: true,
         questionName: 'Nature of Primary Business',
         options: [
           'Retailer',
@@ -324,6 +328,7 @@ const questionnaireData = [
         explanation:
           'These key words will be used to screen the most relevant comparable companies in the market for benchmarking analysis. For example, to describe Tesla Motors, you would say- "B2C" "electric vehicle", "car manufacturer"  - now if we could describe your business , how would u describe.',
         id: 'primaryBusinessDescription',
+        ignore: true,
         questionName: 'Primary Business description (key words)',
       },
       {
@@ -331,6 +336,7 @@ const questionnaireData = [
         question: 'Please select the main operating region for the business.',
         id: 'primaryRegions',
         questionName: 'Main operating regions - Primary',
+        ignore: true,
         options: ['Yes', 'No', 'Sii', 'Albania', 'yup'],
       },
       {
@@ -348,6 +354,7 @@ const questionnaireData = [
           'Does the business currently / intend to venture into a different business line? If yes, answer the below 3 questions.',
         id: 'secondaryBusinessCheck',
         options: ['Yes', 'No'],
+        ignore: true,
         questionName: 'Secondary Business Check',
       },
       {
@@ -355,6 +362,7 @@ const questionnaireData = [
         question:
           "Select the most relevant industry for the company's secondary business operations.",
         id: 'industrySecondaryBusiness',
+        ignore: true,
         questionName: 'Industry - Secondary Business',
         options: [
           'Advertising',
@@ -457,6 +465,7 @@ const questionnaireData = [
         type: 'text',
         question: 'If relevant, specify a sub-industry for your secondary business.',
         id: 'subindustrySecondaryBusiness',
+        ignore: true,
         questionName: 'Sub-industry - Secondary Business',
       },
       {
@@ -464,6 +473,7 @@ const questionnaireData = [
         question:
           'Please select one or more from the below that most accurately describe the nature of your secondary business(es):',
         id: 'secondaryBusiness',
+        ignore: true,
         questionName: 'Nature of Secondary Business',
         options: [
           'Retailer',
@@ -484,12 +494,14 @@ const questionnaireData = [
         explanation:
           'These key words will be used to screen the most relevant comparable companies in the market for benchmarking analysis. For example, to describe Tesla Motors, you would say- "B2C" "electric vehicle", "car manufacturer".',
         id: 'secondaryBusinessDescription',
+        ignore: true,
         questionName: 'Secondary Business description (key words)',
       },
       {
         type: 'other-table',
         question: 'Please select the main operating region for the secondary business.',
         id: 'secondaryRegions',
+        ignore: true,
         questionName: 'Main Operating regions - Secondary',
         options: ['Yes', 'No', 'Sii', 'Albania', 'yup'],
       },
@@ -509,6 +521,7 @@ const questionnaireData = [
         question:
           'Please estimate the average revenue contribution from secondary business (in %).',
         id: 'revenueContributionSecondaryBusiness',
+        ignore: true,
         questionName: 'Revenue contribution - Secondary Business',
       },
     ],
@@ -1254,7 +1267,7 @@ const General: React.FC<QuestionnaireProps> = ({ pId }) => {
                             )}
 
                             {/* Text for 'text' type questions */}
-                            {question.type === 'text' &&
+                            {question.type === 'text' && (question.id !=="historicalFinancialInformation") &&
                               (question.id === 'primaryBusinessDescription' ||
                               question.id === 'secondaryBusinessDescription' ? (
                                 <TextField
@@ -1353,6 +1366,7 @@ const General: React.FC<QuestionnaireProps> = ({ pId }) => {
                                     value={answers[question.id] || ''}
                                     onChange={(e) => handleChange(question.id, e.target.value)}
                                     displayEmpty
+                                    sx={{ textAlign: 'center', '& .MuiSelect-select': { textAlign: 'center' } }}
                                   >
                                     <MenuItem value="" disabled>
                                       Select an option
@@ -1794,9 +1808,13 @@ const General: React.FC<QuestionnaireProps> = ({ pId }) => {
                                 sx={{ textAlign: 'center' }}
                               >
                                 <InputLabel
-                                  sx={{
-                                    textAlign: 'center', marginBottom: '10px',
-                                  }}
+                                    sx={{
+                                      // width: '100%', // Ensures the label spans full width
+                                      textAlign: 'center',
+                                      justifyContent: 'center', 
+                                      display: 'flex',
+                                      marginBottom: '2px'
+                                    }}
                                 >
                                   Duration
                                 </InputLabel>
@@ -1806,8 +1824,14 @@ const General: React.FC<QuestionnaireProps> = ({ pId }) => {
                                   label="Duration"
                                   sx={{
                                     textAlign: 'center',
+                                    marginBottom: '2px',
+                                    justifyContent: 'center',
                                     '& .MuiSelect-select': {
                                       textAlign: 'center',
+                                      display: 'flex',
+                                      justifyContent: 'center',
+                                      // marginTop: '1px',
+                                      paddingBottom: '22px'
                                     },
                                   }}
                                 >

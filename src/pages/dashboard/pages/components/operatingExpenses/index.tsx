@@ -151,7 +151,9 @@ const OperatingExpenses: React.FC<OperatingExpensesProps> = ({ pId }) => {
 
             if (projectData.answers) {
               setAnswers(projectData.answers);
+              console.log(projectData.answers);
               setSelectedTableOption(projectData.answers.operatingExpenseForecastPreference);
+              console.log(projectData.answers.operatingExpenseForecastPreference);
             }
           }
         } catch (error) {
@@ -210,9 +212,12 @@ const OperatingExpenses: React.FC<OperatingExpensesProps> = ({ pId }) => {
     if (questionId === 'operatingExpenseForecastPreference') {
       console.log("HEYPKS", questionId, rowIndex, colIndex, value )
       setSelectedTableOption(value);
+      setAnswers((prevAnswers) => ({
+        ...prevAnswers,
+        [questionId]: value
+      }));
     }
-    console.log(questionId,rowIndex,colIndex,value )
-    if(colIndex === 0){
+    else if(colIndex === 0){
       setAnswers((prevAnswers) => ({
         ...prevAnswers,
         [`${questionId}_${rowIndex}_${colIndex}`]: value,
@@ -307,9 +312,8 @@ const OperatingExpenses: React.FC<OperatingExpensesProps> = ({ pId }) => {
                         <FormControl fullWidth>
                           <RadioGroup
                             value={
-                              // answers[question.id] || ''
-selectedTableOption
-
+                              answers[question.id] || ''
+// selectedTableOption
                             }
                             onChange={(e) =>
                               handleChange(question.id, "nil","nil", e.target.value)

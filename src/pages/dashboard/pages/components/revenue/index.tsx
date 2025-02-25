@@ -120,7 +120,7 @@ const questionnaireData = [
       {
         type: 'text',
         question: ' ',
-        id: 'pipelineStream1',
+        id: 'potentialStream1',
         questionName: 'Potential Stream 1',
         dependsOn: 'potentialrevenue',
         showWhen: 'Yes',
@@ -128,7 +128,7 @@ const questionnaireData = [
       {
         type: 'text',
         question: ' ',
-        id: 'pipelineStream2',
+        id: 'potentialStream2',
         questionName: 'Potential Stream 2',
         dependsOn: 'potentialrevenue',
         showWhen: 'Yes',
@@ -136,7 +136,7 @@ const questionnaireData = [
       {
         type: 'text',
         question: ' ',
-        id: 'pipelineStream3',
+        id: 'potentialStream3',
         questionName: 'Potential Stream 3 ',
         dependsOn: 'potentialrevenue',
         showWhen: 'Yes',
@@ -144,7 +144,7 @@ const questionnaireData = [
       {
         type: 'text',
         question: ' ',
-        id: 'pipelineStream4',
+        id: 'potentialStream4',
         questionName: 'Potential Stream 4 ',
         dependsOn: 'potentialrevenue',
         showWhen: 'Yes',
@@ -417,12 +417,16 @@ const Revenue: React.FC<RevenueProps> = ({ pId }) => {
   // Function to handle the change of answers dynamically
 
   const handleChange = (questionId: string, value: string) => {
-    setAnswers((prevAnswers) => ({
-      ...prevAnswers,
-      [questionId]: value,
-    }));
-    console.log(answers);
+    setAnswers((prevAnswers) => {
+      const updatedAnswers = {
+        ...prevAnswers,
+        [questionId]: value,
+      };
+      console.log("Updated Answers:", updatedAnswers); // Now correctly logs updated state
+      return updatedAnswers;
+    });
   };
+  
 
   const isSegmentCompleted = (segment: Segment) => {
     return segment.questions.every((question: Question) => {
@@ -461,15 +465,22 @@ const Revenue: React.FC<RevenueProps> = ({ pId }) => {
     setAnswers(updatedAnswers);
   };
 
-  const handleOptionChange = (
-    questionId: string,
-    value: string,
-    currentAnswers: Record<string, string>,
-    setAnswers: (answers: Record<string, string>) => void,
-  ) => {
-    handleAutoFillChange(questionId, value, questionnaireData, currentAnswers, setAnswers);
+  const handleOptionChange = (questionId: string, value: string) => {
+    setAnswers((prevAnswers) => {
+      const updatedAnswers = { ...prevAnswers, [questionId]: value };
+  
+      questionnaireData.forEach((segment) => {
+        segment.questions.forEach((question) => {
+          if (question.dependsOn === questionId) {
+            updatedAnswers[question.id] = question.autofill?.[value] || '';
+          }
+        });
+      });
+  
+      return updatedAnswers;
+    });
   };
-
+  
   // Check if a question should be displayed based on its dependsOn and showWhen
   const shouldShowQuestion = (question: OtherQuestion): boolean => {
     if (question.dependsOn && question.showWhen) {
@@ -707,8 +718,8 @@ const Revenue: React.FC<RevenueProps> = ({ pId }) => {
                                         handleOptionChange(
                                           question.id,
                                           selectedValue,
-                                          answers,
-                                          setAnswers,
+                                          // answers,
+                                          // setAnswers,
                                         );
 
                                         // If needed, handle other logic for MCQ
@@ -782,6 +793,7 @@ const Revenue: React.FC<RevenueProps> = ({ pId }) => {
                                       value={answers[question.id] || ''}
                                       onChange={(e) => handleChange(question.id, e.target.value)}
                                       displayEmpty
+                                      sx={{ textAlign: 'center', '& .MuiSelect-select': { textAlign: 'center' } }}
                                     >
                                       <MenuItem value="" disabled>
                                         Select an option

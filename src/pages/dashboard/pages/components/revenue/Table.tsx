@@ -847,7 +847,7 @@ const RevenueTables: React.FC<DynamicTablesProps> = ({ pId, answers, setAnswers 
      
       columns: ['YTD', 'Current Year', 'Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
       ignore: true,
-      tableNumber: '4',
+      tableNumber: '7',
     },
     {
       type: 'table',
@@ -908,6 +908,7 @@ const RevenueTables: React.FC<DynamicTablesProps> = ({ pId, answers, setAnswers 
       ],
       columns: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
       ignore: true,
+      tableNumber: '8',
     },
     {
       type: 'dropdown',
@@ -979,7 +980,7 @@ const RevenueTables: React.FC<DynamicTablesProps> = ({ pId, answers, setAnswers 
      
       columns: ['YTD', 'Current Year', 'Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
       ignore: true,
-      tableNumber: '4',
+      tableNumber: '9',
     },
     {
       type: 'table',
@@ -1040,6 +1041,7 @@ const RevenueTables: React.FC<DynamicTablesProps> = ({ pId, answers, setAnswers 
       ],
       columns: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
       ignore: true,
+      tableNumber: '10',
     },
     {
       type: 'dropdown',
@@ -1111,7 +1113,7 @@ const RevenueTables: React.FC<DynamicTablesProps> = ({ pId, answers, setAnswers 
      
       columns: ['YTD', 'Current Year', 'Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
       ignore: true,
-      tableNumber: '4',
+      tableNumber: '11',
     },
     {
       type: 'table',
@@ -1172,6 +1174,7 @@ const RevenueTables: React.FC<DynamicTablesProps> = ({ pId, answers, setAnswers 
       ],
       columns: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
       ignore: true,
+      tableNumber: '12',
     },
   ];
   const [tables, setTables] = useState<TableData[]>(rowTable);
@@ -1223,25 +1226,24 @@ const RevenueTables: React.FC<DynamicTablesProps> = ({ pId, answers, setAnswers 
   //     fetchData();
   // }, [user, projectId]);
   useEffect(() => {
-    const fetchData = async () => {
-      if (user && projectId) {
-        console.log(answers);
-        try {
-          const docSnap = await getDoc(doc(firestore, 'users', user.uid, 'projects', projectId));
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            console.log(data.tables);
-             setTables(data.tables || rowTable);
-          } else {
-            console.warn('No document found for the given project ID.');
+  const fetchData = async () => {
+    if (user && projectId) {
+      try {
+        const docSnap = await getDoc(doc(firestore, 'users', user.uid, 'projects', projectId));
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.tables) {
+            setTables(data.tables); // Only update if tables exist
           }
-        } catch (error) {
-          console.error('Error fetching table data:', error);
         }
+      } catch (error) {
+        console.error('Error fetching table data:', error);
       }
-    };
-    fetchData();
-  }, [user, projectId]);
+    }
+  };
+  fetchData();
+}, [user, projectId]);
+
 
   const handleInputChange = (
     tableNumber: string,
@@ -1249,6 +1251,7 @@ const RevenueTables: React.FC<DynamicTablesProps> = ({ pId, answers, setAnswers 
     column: string,
     value: string,
   ) => {
+    console.log(tableNumber, rowIndex, column, value);
     setTables((prevTables) => {
       const updatedTables = [...prevTables];
       const inputTable = updatedTables.find((table) => table.tableNumber === tableNumber);
@@ -1412,16 +1415,19 @@ const RevenueTables: React.FC<DynamicTablesProps> = ({ pId, answers, setAnswers 
                                 '-webkit-appearance': 'none',
                                 margin: 0,
                               },
-                            },
+                              },
                           }}
                           value={row.values[col] ?? ''}
                           onChange={(e) =>
+                          {
                             handleInputChange(
                               table.tableNumber as string,
                               rowIndex,
                               col,
                               e.target.value,
                             )
+                            console.log("Hey PKSs", table, table.tableNumber, rowIndex, col, e.target.value )
+                          }
                           }
                           inputProps={{
                             step: 'any',
